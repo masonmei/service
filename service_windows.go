@@ -231,9 +231,12 @@ func lowPrivMgr() (*mgr.Mgr, error) {
 }
 
 func lowPrivSvc(m *mgr.Mgr, name string) (*mgr.Service, error) {
+	ptr, err := syscall.UTF16PtrFromString(name)
+	if err != nil {
+		return nil, err
+	}
 	h, err := windows.OpenService(
-		m.Handle, syscall.StringToUTF16Ptr(name),
-		windows.SERVICE_QUERY_CONFIG|windows.SERVICE_QUERY_STATUS|windows.SERVICE_START|windows.SERVICE_STOP)
+		m.Handle, ptr, windows.SERVICE_QUERY_CONFIG|windows.SERVICE_QUERY_STATUS|windows.SERVICE_START|windows.SERVICE_STOP)
 	if err != nil {
 		return nil, err
 	}
